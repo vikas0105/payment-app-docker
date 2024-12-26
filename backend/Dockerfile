@@ -1,23 +1,25 @@
-# Stage 1: Build the application
+# Stage 1: Build stage
 FROM maven:3.8.6-openjdk-11 AS build
 
+# Set working directory
 WORKDIR /app
 
-# Copy pom.xml and install dependencies
-COPY ./pom.xml .
-RUN mvn dependency:go-offline
+# Copy the pom.xml and source code to the build container
+COPY ./pom.xml ./
+COPY ./src ./src/
 
-# Copy source code and build the application
-COPY ./src ./src
+# Install dependencies and build the application
+RUN mvn dependency:go-offline
 RUN mvn clean package -DskipTests
 
-# Stage 2: Run the application using a smaller OpenJDK image
+# Stage 2: Runtime stage
 FROM openjdk:11-jre-slim
 
+# Set working directory
 WORKDIR /app
 
-# Copy the jar file from the build stage
-COPY --from=build /app/target/payment-app-backend.jar /app/payment-app-backend.jar
+# Copy the JAR file dynamically from the build stage
+COPY --from=build /app/target/*.jar /app/payment-app-backend.jar
 
-# Run the application
+# Set the entry point to run the Java application
 ENTRYPOINT ["java", "-jar", "payment-app-backend.jar"]
