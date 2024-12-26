@@ -1,25 +1,18 @@
-# Stage 1: Build stage
-FROM maven:3.8.6-openjdk-11 AS build
+# Step 1: Build the Spring Boot app using Maven
+FROM maven:3.8.4-openjdk-16 AS build
 
-# Set working directory
 WORKDIR /app
-
-# Copy the pom.xml and source code to the build container
-COPY ./pom.xml ./
-COPY ./src ./src/
-
-# Install dependencies and build the application
+COPY ./pom.xml ./pom.xml
 RUN mvn dependency:go-offline
+
+COPY ./src ./src
 RUN mvn clean package -DskipTests
 
-# Stage 2: Runtime stage
-FROM openjdk:11-jre-slim
+# Step 2: Run the Spring Boot app
+FROM openjdk:16-jdk-alpine
 
-# Set working directory
 WORKDIR /app
+COPY --from=build /app/target/*.jar /app/payment-app.jar
 
-# Copy the JAR file dynamically from the build stage
-COPY --from=build /app/target/*.jar /app/payment-app-backend.jar
-
-# Set the entry point to run the Java application
-ENTRYPOINT ["java", "-jar", "payment-app-backend.jar"]
+EXPOSE 8080
+CMD ["java", "-jar", "/app/payment-app.jar"]
