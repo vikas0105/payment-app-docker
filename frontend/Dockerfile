@@ -4,11 +4,8 @@ FROM node:16 AS build
 # Set working directory
 WORKDIR /app
 
-# Copy package.json and package-lock.json
-COPY ./frontend/package.json ./frontend/package-lock.json ./
-
-# If package-lock.json is missing, regenerate it by installing dependencies
-RUN [ -f package-lock.json ] || npm install
+# Copy package.json (No package-lock.json)
+COPY ./frontend/package.json ./
 
 # Install dependencies
 RUN npm install
