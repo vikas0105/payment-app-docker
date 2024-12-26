@@ -5,16 +5,16 @@ FROM node:16 AS build
 WORKDIR /app
 
 # Copy package.json (No package-lock.json)
-COPY ./frontend/package.json ./
+COPY frontend/package.json ./
 
 # Install dependencies
 RUN npm install
 
 # Copy the source code
-COPY ./frontend/src ./src
+COPY frontend/src ./src
 
 # Copy public folder containing index.html
-COPY ./frontend/public ./public
+COPY frontend/public ./public
 
 # Build the app
 RUN npm run build
