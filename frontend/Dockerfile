@@ -4,7 +4,7 @@ FROM node:16 AS build
 # Set working directory
 WORKDIR /app
 
-# Copy package.json and package-lock.json (if it exists)
+# Copy package.json and package-lock.json
 COPY ./frontend/package.json ./frontend/package-lock.json ./
 
 # If package-lock.json is missing, regenerate it by installing dependencies
