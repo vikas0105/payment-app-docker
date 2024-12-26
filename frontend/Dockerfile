@@ -3,8 +3,10 @@ FROM node:16 AS build
 
 WORKDIR /app
 
-# Copy package.json and package-lock.json and install dependencies
-COPY package.json package-lock.json ./
+# Copy package.json (without package-lock.json)
+COPY ./package.json ./
+
+# Install dependencies (npm will create package-lock.json)
 RUN npm install
 
 # Copy source code and build the app
